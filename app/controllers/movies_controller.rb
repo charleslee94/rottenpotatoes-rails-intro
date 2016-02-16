@@ -3,7 +3,6 @@ class MoviesController < ApplicationController
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
-  
 
   def show
     id = params[:id] # retrieve movie ID from URI route
@@ -12,12 +11,17 @@ class MoviesController < ApplicationController
   end
 
   def index
+    # Sets up array of Ratings
+    @all_ratings = Movie.ratings
+    keys = params[:ratings].keys
+    # If statement to figure out which column to highlight
     if params[:sort] == 'title'
       @title_header = :hilite
     end
     else if params[:sort] == 'release_date'
       @release_header = :hilite
     end
+    # Show sorted movies
     @movies = Movie.order(params[:sort])
   end
 
