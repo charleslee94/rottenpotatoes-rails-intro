@@ -11,19 +11,23 @@ class MoviesController < ApplicationController
   end
 
   def index
-    # Sets up array of Ratings
     @all_ratings = Movie.ratings
-    keys = params[:ratings].keys
-    # If statement to figure out which column to highlight
-    if params[:sort] == 'title'
+    if params[:sort] == 'title' 
       @title_header = :hilite
-    end
-    else if params[:sort] == 'release_date'
+    elsif params[:sort] == 'release_date' 
       @release_header = :hilite
     end
-    # Show sorted movies
-    @movies = Movie.order(params[:sort])
+    if params[:sort]
+      @movies = Movie.order(params[:sort])
+    elsif params[:ratings] || session[:rating]
+      flash[:notice] = params[:ratings].keys
+      keys =  params[:ratings].keys
+      @movies = Movie.where("rating IN (?)", keys).order(params[:sort])
+    else
+      @movies = Movie.all
+    end
   end
+
 
   def new
     # default: render 'new' template
